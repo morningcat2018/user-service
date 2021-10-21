@@ -12,8 +12,8 @@ var (
 
 func init() {
 	UserList = make(map[string]*User)
-	u := User{"user_11111", "astaxie", "11111", Profile{"male", 20, "Singapore", "astaxie@gmail.com"}}
-	UserList["user_11111"] = &u
+	u := User{"user1", "晨猫", "123456", Profile{"男", 28, "南京市雨花台区", "mengzhang1993@gmail.com"}}
+	UserList["user1"] = &u
 }
 
 type User struct {

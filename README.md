@@ -22,4 +22,23 @@ bee generate
 
 ## 访问 
 
-http://localhost:8080/
+localhost:8080/v1/user 
+Get
+
+{
+    "user1": {
+        "Id": "user1",
+        "Username": "晨猫",
+        "Password": "123456",
+        "Profile": {
+            "Gender": "男",
+            "Age": 28,
+            "Address": "南京市雨花台区",
+            "Email": "mengzhang1993@gmail.com"
+        }
+    }
+}
+
+---
+
+
