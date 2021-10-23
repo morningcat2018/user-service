@@ -22,7 +22,8 @@ func (u *UserController) Post() {
 	var user models.User
 	json.Unmarshal(u.Ctx.Input.RequestBody, &user)
 	uid := models.AddUser(user)
-	u.Data["json"] = map[string]string{"uid": uid}
+
+	u.Data["json"] = map[string]uint64{"uid": uid}
 	u.ServeJSON()
 }
 
@@ -43,8 +44,8 @@ func (u *UserController) GetAll() {
 // @Failure 403 :uid is empty
 // @router /:uid [get]
 func (u *UserController) Get() {
-	uid := u.GetString(":uid")
-	if uid != "" {
+	uid, _ := u.GetUint64(":uid")
+	if uid > 0 {
 		user, err := models.GetUser(uid)
 		if err != nil {
 			u.Data["json"] = err.Error()
@@ -63,8 +64,8 @@ func (u *UserController) Get() {
 // @Failure 403 :uid is not int
 // @router /:uid [put]
 func (u *UserController) Put() {
-	uid := u.GetString(":uid")
-	if uid != "" {
+	uid, _ := u.GetUint64(":uid")
+	if uid > 0 {
 		var user models.User
 		json.Unmarshal(u.Ctx.Input.RequestBody, &user)
 		uu, err := models.UpdateUser(uid, &user)
@@ -84,7 +85,7 @@ func (u *UserController) Put() {
 // @Failure 403 uid is empty
 // @router /:uid [delete]
 func (u *UserController) Delete() {
-	uid := u.GetString(":uid")
+	uid, _ := u.GetUint64(":uid")
 	models.DeleteUser(uid)
 	u.Data["json"] = "delete success!"
 	u.ServeJSON()

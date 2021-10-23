@@ -2,85 +2,92 @@ package models
 
 import (
 	"errors"
-	"strconv"
-	"time"
+	"fmt"
+	"github.com/astaxie/beego/orm"
 )
 
-var (
-	UserList map[string]*User
-)
+var ormer orm.Ormer
+var qs orm.QuerySeter
 
 func init() {
-	UserList = make(map[string]*User)
-	u := User{"user1", "晨猫", "123456", Profile{"男", 28, "南京市雨花台区", "mengzhang1993@gmail.com"}}
-	UserList["user1"] = &u
+	// 注册模型
+	//orm.RegisterModel(new(Profile))
+	orm.RegisterModel(new(User))
+	fmt.Println("注册 User 模型")
+
+	ormer = orm.NewOrm()
+	qs = ormer.QueryTable(new(User))
+
 }
 
 type User struct {
-	Id       string
-	Username string
-	Password string
-	Profile  Profile
+	Id       uint64 `orm:"pk,auto"  json:"id"`
+	UserName string `orm:"index" json:"userName"`
+	Password string `orm:"column(password)" json:"password"`
+	Age      int    `json:"age"`
+	Addr     string `orm:"null;column(address);size(500)" json:"address"`
+	Email    string `orm:"null;size(50)" json:"email"` // 允许为null
 }
 
-type Profile struct {
-	Gender  string
-	Age     int
-	Address string
-	Email   string
+func (*User) TableName() string {
+	return "go_user"
 }
 
-func AddUser(u User) string {
-	u.Id = "user_" + strconv.FormatInt(time.Now().UnixNano(), 10)
-	UserList[u.Id] = &u
+func AddUser(u User) uint64 {
+	ormer.Insert(&u)
 	return u.Id
 }
 
-func GetUser(uid string) (u *User, err error) {
-	if u, ok := UserList[uid]; ok {
-		return u, nil
+func GetUser(uid uint64) (u *User, err error) {
+	user := User{}
+	qs.Filter("id", uid).One(&user)
+	//qs.Filter("age__gt",17)
+	if user.Id > 0 {
+		return &user, nil
 	}
 	return nil, errors.New("User not exists")
 }
 
-func GetAllUsers() map[string]*User {
-	return UserList
+func GetAllUsers() map[uint64]*User {
+	users := []User{}
+	qs.All(&users)
+
+	userMap := make(map[uint64]*User)
+	for index, user := range users {
+		userMap[user.Id] = &users[index]
+	}
+
+	return userMap
 }
 
-func UpdateUser(uid string, uu *User) (a *User, err error) {
-	if u, ok := UserList[uid]; ok {
-		if uu.Username != "" {
-			u.Username = uu.Username
-		}
-		if uu.Password != "" {
-			u.Password = uu.Password
-		}
-		if uu.Profile.Age != 0 {
-			u.Profile.Age = uu.Profile.Age
-		}
-		if uu.Profile.Address != "" {
-			u.Profile.Address = uu.Profile.Address
-		}
-		if uu.Profile.Gender != "" {
-			u.Profile.Gender = uu.Profile.Gender
-		}
-		if uu.Profile.Email != "" {
-			u.Profile.Email = uu.Profile.Email
-		}
-		return u, nil
-	}
+func UpdateUser(uid uint64, uu *User) (a *User, err error) {
+	//if u, ok := UserList[uid]; ok {
+	//	if uu.Username != "" {
+	//		u.Username = uu.Username
+	//	}
+	//	if uu.Password != "" {
+	//		u.Password = uu.Password
+	//	}
+	//	return u, nil
+	//}
 	return nil, errors.New("User Not Exist")
 }
 
 func Login(username, password string) bool {
-	for _, u := range UserList {
-		if u.Username == username && u.Password == password {
+	user := User{}
+	qs.Filter("user_name", username).One(&user)
+	if user.Id > 0 {
+		if user.Password == password {
 			return true
 		}
 	}
 	return false
 }
 
-func DeleteUser(uid string) {
-	delete(UserList, uid)
+func DeleteUser(uid uint64) {
+	user := User{}
+	qs.Filter("id", uid).One(&user)
+	if user.Id > 0 {
+		ormer.Delete(&user)
+	}
 }
