@@ -11,13 +11,11 @@ var qs orm.QuerySeter
 
 func init() {
 	// 注册模型
-	//orm.RegisterModel(new(Profile))
 	orm.RegisterModel(new(User))
 	fmt.Println("注册 User 模型")
 
 	ormer = orm.NewOrm()
 	qs = ormer.QueryTable(new(User))
-
 }
 
 type User struct {
@@ -30,7 +28,7 @@ type User struct {
 }
 
 func (*User) TableName() string {
-	return "go_user"
+	return "go_user" // 自定义表名
 }
 
 func AddUser(u User) uint64 {
@@ -61,15 +59,24 @@ func GetAllUsers() map[uint64]*User {
 }
 
 func UpdateUser(uid uint64, uu *User) (a *User, err error) {
-	//if u, ok := UserList[uid]; ok {
-	//	if uu.Username != "" {
-	//		u.Username = uu.Username
-	//	}
-	//	if uu.Password != "" {
-	//		u.Password = uu.Password
-	//	}
-	//	return u, nil
-	//}
+	user := User{}
+	qs.Filter("id", uid).One(&user)
+	if user.Id > 0 {
+		if uu.Password != "" {
+			user.Password = uu.Password
+		}
+		if uu.Addr != "" {
+			user.Addr = uu.Addr
+		}
+		if uu.Email != "" {
+			user.Email = uu.Email
+		}
+		if uu.Age > 0 {
+			user.Age = uu.Age
+		}
+		ormer.Update(&user)
+		return &user, nil
+	}
 	return nil, errors.New("User Not Exist")
 }
 
