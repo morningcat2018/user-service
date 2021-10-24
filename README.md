@@ -36,25 +36,13 @@ GetAll
 localhost:8080/v1/user/user1
 Get id=user1
 
-{
-    "user1": {
-        "Id": "user1",
-        "Username": "晨猫",
-        "Password": "123456",
-        "Profile": {
-            "Gender": "男",
-            "Age": 28,
-            "Address": "南京市雨花台区",
-            "Email": "mengzhang1993@gmail.com"
-        }
-    }
-}
-
 ---
 
 ## orm
 
+查看创建表的SQL
 > go run main.go orm sqlall 
 
+创建表
 > go run main.go orm syncdb
 
