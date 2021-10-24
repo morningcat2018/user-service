@@ -3,7 +3,8 @@ package models
 import (
 	"errors"
 	"fmt"
-	"github.com/astaxie/beego/orm"
+
+	"github.com/beego/beego/v2/client/orm"
 )
 
 var ormer orm.Ormer

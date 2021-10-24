@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"user-service/models"
 
-	"github.com/astaxie/beego"
+	beego "github.com/beego/beego/v2/server/web"
 )
 
 // Operations about Users
@@ -22,8 +22,8 @@ func (u *UserController) Post() {
 	var user models.User
 	json.Unmarshal(u.Ctx.Input.RequestBody, &user)
 	uid := models.AddUser(user)
-	user.Id = uid
-	u.Data["json"] = buildSuccessRes(user)
+	//user.Id = uid
+	u.Data["json"] = buildSuccessRes(uid)
 	u.ServeJSON()
 }
 
@@ -49,7 +49,7 @@ func (u *UserController) Get() {
 	if uid > 0 {
 		user, err := models.GetUser(uid)
 		if err != nil {
-			u.Data["json"] = err.Error()
+			u.Data["json"] = buildFailRes(err)
 		} else {
 			u.Data["json"] = buildSuccessRes(user)
 		}
@@ -71,7 +71,7 @@ func (u *UserController) Put() {
 		json.Unmarshal(u.Ctx.Input.RequestBody, &user)
 		uu, err := models.UpdateUser(uid, &user)
 		if err != nil {
-			u.Data["json"] = err.Error()
+			u.Data["json"] = buildFailRes(err)
 		} else {
 			u.Data["json"] = buildSuccessRes(uu)
 		}
@@ -86,9 +86,13 @@ func (u *UserController) Put() {
 // @Failure 403 uid is empty
 // @router /:uid [delete]
 func (u *UserController) Delete() {
-	uid, _ := u.GetUint64(":uid")
-	models.DeleteUser(uid)
-	u.Data["json"] = buildSuccessRes(uid)
+	uid, err := u.GetUint64(":uid")
+	if err != nil {
+		u.Data["json"] = buildFailRes(err)
+	} else {
+		models.DeleteUser(uid)
+		u.Data["json"] = buildSuccessRes(uid)
+	}
 	u.ServeJSON()
 }
 

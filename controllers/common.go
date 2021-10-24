@@ -9,3 +9,7 @@ type ResponseData struct {
 func buildSuccessRes(data interface{}) *ResponseData {
 	return &ResponseData{0, "success", data}
 }
+
+func buildFailRes(e error) *ResponseData {
+	return &ResponseData{-1, e.Error(), nil}
+}
