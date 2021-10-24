@@ -58,6 +58,12 @@ func GetAllUsers() map[uint64]*User {
 	return userMap
 }
 
+func GetAllUserList() []User {
+	users := []User{}
+	qs.All(&users)
+	return users
+}
+
 func UpdateUser(uid uint64, uu *User) (a *User, err error) {
 	user := User{}
 	qs.Filter("id", uid).One(&user)

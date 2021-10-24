@@ -22,8 +22,8 @@ func (u *UserController) Post() {
 	var user models.User
 	json.Unmarshal(u.Ctx.Input.RequestBody, &user)
 	uid := models.AddUser(user)
-
-	u.Data["json"] = map[string]uint64{"uid": uid}
+	user.Id = uid
+	u.Data["json"] = buildSuccessRes(user)
 	u.ServeJSON()
 }
 
@@ -32,8 +32,9 @@ func (u *UserController) Post() {
 // @Success 200 {object} models.User
 // @router / [get]
 func (u *UserController) GetAll() {
-	users := models.GetAllUsers()
-	u.Data["json"] = users
+	users := models.GetAllUserList()
+
+	u.Data["json"] = buildSuccessRes(users)
 	u.ServeJSON()
 }
 
@@ -50,7 +51,7 @@ func (u *UserController) Get() {
 		if err != nil {
 			u.Data["json"] = err.Error()
 		} else {
-			u.Data["json"] = user
+			u.Data["json"] = buildSuccessRes(user)
 		}
 	}
 	u.ServeJSON()
@@ -72,7 +73,7 @@ func (u *UserController) Put() {
 		if err != nil {
 			u.Data["json"] = err.Error()
 		} else {
-			u.Data["json"] = uu
+			u.Data["json"] = buildSuccessRes(uu)
 		}
 	}
 	u.ServeJSON()
@@ -87,7 +88,7 @@ func (u *UserController) Put() {
 func (u *UserController) Delete() {
 	uid, _ := u.GetUint64(":uid")
 	models.DeleteUser(uid)
-	u.Data["json"] = "delete success!"
+	u.Data["json"] = buildSuccessRes(uid)
 	u.ServeJSON()
 }
 
@@ -102,9 +103,9 @@ func (u *UserController) Login() {
 	username := u.GetString("username")
 	password := u.GetString("password")
 	if models.Login(username, password) {
-		u.Data["json"] = "login success"
+		u.Data["json"] = buildSuccessRes(true)
 	} else {
-		u.Data["json"] = "user not exist"
+		u.Data["json"] = buildSuccessRes(false)
 	}
 	u.ServeJSON()
 }
@@ -114,6 +115,6 @@ func (u *UserController) Login() {
 // @Success 200 {string} logout success
 // @router /logout [get]
 func (u *UserController) Logout() {
-	u.Data["json"] = "logout success"
+	u.Data["json"] = buildSuccessRes("logout success")
 	u.ServeJSON()
 }
