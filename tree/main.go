@@ -9,7 +9,7 @@ func main() {
 	root.Put(19)
 	root.Put(30)
 	root.Put(23)
-	//root.Put(36)
-	//root.Put(2)
+	root.Put(36)
+	root.Put(2)
 	root.MidOrderErgodic()
 }

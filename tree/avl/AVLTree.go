@@ -56,7 +56,7 @@ func calcBalanceFactor(node *AVLTreeNode) int {
 }
 
 // 左旋
-func (t AVLTree) leftRotation(node *AVLTreeNode) {
+func (t *AVLTree) leftRotation(node *AVLTreeNode) {
 	if node == nil {
 		return
 	}
@@ -78,7 +78,7 @@ func (t AVLTree) leftRotation(node *AVLTreeNode) {
 
 }
 
-func (t AVLTree) rightRotation(node *AVLTreeNode) {
+func (t *AVLTree) rightRotation(node *AVLTreeNode) {
 	if node == nil {
 		return
 	}
