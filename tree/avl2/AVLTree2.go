@@ -18,7 +18,7 @@ type AvlTree struct {
 
 type Status bool
 
-// https://www.cnblogs.com/polly333/p/4798944.html
+//参考实现：https://www.cnblogs.com/polly333/p/4798944.html
 //对以p为根的二叉排序树作右旋处理
 //处理之后p指向新的树根结点，即旋转处理之前的左子树的根结点
 //右旋-顺时针旋转(如LL型就得对根结点做该旋转)

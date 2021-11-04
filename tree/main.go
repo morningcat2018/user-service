@@ -1,9 +1,7 @@
 package main
 
-import (
-	"tree/avl2"
-)
+import "tree/avl2_update"
 
 func main() {
-	avl2.RunTest()
+	avl2_update.RunTest()
 }
